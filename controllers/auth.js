@@ -3,7 +3,7 @@ const asyncHandler= require('../middlewares/async')
 const ErrorResponse= require('../utilities/errorResponse')
 const geocoder= require('../utilities/geocoder')
 const User=require('../models/User')
-
+const {NODE_ENV,COOKIE_EXPIRE}=require('../config/index')
 
 //@desc         create user
 //@route        post on /auth/register
@@ -35,6 +35,23 @@ exports.login =asyncHandler(async(req,res,next) =>{
         return next(new ErrorResponse('invalid credentials',401))
     }
     sendTokenResponse(user,200,res)
+})
+
+
+
+//@desc         logout user
+//@route        post on /auth/logout
+//access        public
+exports.logout =asyncHandler(async(req,res,next) =>{
+    res.cookie('token','none',{
+        expires:new Date(Date.now()+10*1000),
+        httpOnly:true
+    })
+   
+    res.status(200).json({
+        success:true,
+        data:{}
+    })
 })
 
 
@@ -129,11 +146,11 @@ const sendTokenResponse=(user,statusCode,res)=>{
     //create token
     const token=user.getJwtToken()
     const options={
-        expires:new Date(Date.now()+process.env.cookieexpire*24*60*60*1000),
+        expires:new Date(Date.now()+COOKIE_EXPIRE*24*60*60*1000),
         httpOnly:true
     };
    
-    if(process.env.NODE_ENV==='production'){
+    if(NODE_ENV==='production'){
         options.secure=true
     }
     res
