@@ -10,8 +10,9 @@ const User=require('../models/User')
 //access        public
 
 exports.register=asyncHandler(async(req,res,next)=>{
-
+    
       const user=await User.create(req.body)
+      
       res.status(200).json({
           success:true,
           data:user
@@ -49,7 +50,7 @@ exports.getspecificuser=asyncHandler(async(req,res,next)=>{
 exports.updateuser=asyncHandler(async(req,res,next)=>{
     let user=await User.findById(req.params.id)
     if(!user){
-        return next(new ErrorResponse(`User not found in database id:${req.params.id}`))
+        return next(new ErrorResponse(`User not found in database id:${req.params.id}`,404))
     }
 
     user=await User.findByIdAndUpdate(req.params.id,req.body,{
@@ -69,7 +70,7 @@ exports.updateuser=asyncHandler(async(req,res,next)=>{
 exports.deleteuser=asyncHandler(async(req,res,next)=>{
     const user=await User.findById(req.params.id)
     if(!user){
-        return next(new ErrorResponse(`User not found in database id:${req.params.id}`))
+        return next(new ErrorResponse(`User not found in database id:${req.params.id}`,404))
     }
     await user.remove()
     res.status(200).json({
