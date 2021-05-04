@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const geocoder= require ('../utilities/geocoder')
 const Userschema= new mongoose.Schema({
     name:{
         type:String,
@@ -10,6 +10,29 @@ const Userschema= new mongoose.Schema({
         type:String,
         required:true,
     },
+    address:{
+        type:String,
+        required:true,
+        maxlength: [200,'address length must not more than 200']
+      },
+      location: {
+          type: {
+            type: String, // Don't do `{ location: { type: String } }`
+            enum: ['Point'], // 'location.type' must be 'Point'
+          //   required: true
+          },
+          coordinates: {
+              type: [Number],
+              // required: true,
+              index: '2dsphere'
+            },
+            formattedAddress: String,
+            street: String,
+            city : String,
+            state: String,
+            Zipcode : String,
+            country : String
+      },
     dob:{
         type: Date,
         required: true,
@@ -35,4 +58,20 @@ const Userschema= new mongoose.Schema({
         default:Date.now
     }
 })
+Userschema.pre('save',async function(next){
+    const loc= await geocoder.geocode(this.address)
+    this.location={
+      type:'Point',
+      coordinates: [loc[0].longitude,loc[0].latitude],
+      formattedAddress:loc[0].formattedAddress,
+      street:loc[0].streetName,
+      city:loc[0].city,
+      state:loc[0].stateCode,
+      Zipcode:loc[0].zipcode,
+      country:loc[0].countryCode
+    }
+    //dont save address after getting formatted in db
+    this.address=undefined
+    next()
+  });
 module.exports=mongoose.model('User',Userschema)
