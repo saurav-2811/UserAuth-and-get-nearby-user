@@ -87,5 +87,8 @@ Userschema.pre('save',async function(next){
     id:this._id
    },JWT_SECRET, { expiresIn:JWT_EXPIRE})
  }
+ Userschema.methods.matchpassword=async function(enteredpassword){
+  return await bcrypt.compare(enteredpassword,this.password)
+}
 
 module.exports=mongoose.model('User',Userschema)
