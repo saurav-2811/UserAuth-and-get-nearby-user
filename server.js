@@ -1,5 +1,6 @@
 const express=require('express')
 const Logger=require('morgan')
+const errorHandler=require('./middlewares/error')
 const auth=require('./routers/auth')
 //bringing connection module
 const connectDb=require('./config/ConnectionDb')
@@ -18,6 +19,10 @@ if(NODE_ENV){
 connectDb()
 //using router
 app.use('/auth',auth)
+
+//useing middleware error
+app.use(errorHandler)
+
 //setting up server
 const Server=async()=>{
 try {
