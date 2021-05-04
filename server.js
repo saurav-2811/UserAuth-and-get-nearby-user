@@ -1,5 +1,6 @@
 const express=require('express')
 const Logger=require('morgan')
+const cors= require('cors')
 const cookieParser= require ('cookie-parser')
 const errorHandler=require('./middlewares/error')
 const auth=require('./routers/auth')
@@ -10,6 +11,8 @@ const{NODE_ENV,PORT}=require('./config/index')
 
 const app=express()
 app.use(express.urlencoded({ extended: true }));
+//cors
+app.use(cors())
 //body parser
 app.use(express.json());
 //cookie parser

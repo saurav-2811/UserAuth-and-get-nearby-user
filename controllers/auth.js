@@ -10,8 +10,12 @@ const {NODE_ENV,COOKIE_EXPIRE}=require('../config/index')
 //access        public
 
 exports.register=asyncHandler(async(req,res,next)=>{
+    const{name,email,description,dob}=req.body
     const user=await User.create(req.body)
-    sendTokenResponse(user,200,res)
+    res.status(200).json({
+        success:true,
+        data:{name,email,description,dob}
+    })
       
     })
 
