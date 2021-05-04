@@ -10,13 +10,9 @@ const User=require('../models/User')
 //access        public
 
 exports.register=asyncHandler(async(req,res,next)=>{
-    
-      const user=await User.create(req.body)
+    const user=await User.create(req.body)
+    sendTokenResponse(user,200,res)
       
-      res.status(200).json({
-          success:true,
-          data:user
-      })
     })
 
 //@desc         get all users
@@ -102,3 +98,25 @@ exports.GetWithInRadius = asyncHandler(async(req,res,next) =>{
      data: user
    });
 });
+
+
+//get token from model,create cookie and send response
+const sendTokenResponse=(user,statusCode,res)=>{
+    //create token
+    const token=user.getJwtToken()
+    const options={
+        expires:new Date(Date.now()+process.env.cookieexpire*24*60*60*1000),
+        httpOnly:true
+    };
+   
+    if(process.env.NODE_ENV==='production'){
+        options.secure=true
+    }
+    res
+    .status(statusCode)
+    .cookie('token',token,options)
+    .json({
+        success:true,
+        token:token
+    })
+}

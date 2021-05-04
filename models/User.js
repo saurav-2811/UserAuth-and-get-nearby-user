@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt=require('bcryptjs')
+const{JWT_SECRET,JWT_EXPIRE}=require('../config/index')
+const jwt= require('jsonwebtoken')
 const geocoder= require ('../utilities/geocoder')
 const Userschema= new mongoose.Schema({
     name:{
@@ -75,9 +77,15 @@ Userschema.pre('save',async function(next){
     this.address=undefined
     next()
   });
-  Userschema.pre('save',async function(){
+  Userschema.pre('save',async function(next){
     const salt=await bcrypt.genSalt(10)
     this.password=await bcrypt.hash(this.password,salt)
-    
+    next()
   })
+
+  Userschema.methods.getJwtToken=function(){ return jwt.sign({
+    id:this._id
+   },JWT_SECRET, { expiresIn:JWT_EXPIRE})
+ }
+
 module.exports=mongoose.model('User',Userschema)
