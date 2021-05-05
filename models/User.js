@@ -38,8 +38,6 @@ const Userschema= new mongoose.Schema({
       },
     dob:{
         type: Date,
-        required: true,
-        default:Date.now,
         trim: true,
     },
     email:{
