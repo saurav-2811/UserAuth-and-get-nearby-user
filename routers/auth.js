@@ -8,6 +8,6 @@ router.route('/user/:id').get(protect,getspecificuser).put(protect,updateuser).d
 router.route('/register').post(register)
 router.route('/login').post(login)
 router.route('/logout').get(protect,logout)
-router.route('/radius/:zipcode').get(protect,GetWithInRadius)
+router.route('/radius/:email/:name').get(protect,GetWithInRadius)
 
 module.exports=router

@@ -121,10 +121,15 @@ exports.deleteuser=asyncHandler(async(req,res,next)=>{
 })
 
 //@desc         get users near by  by useing zipcode of that specific  user with range of 10 miles or 15-16km radius 
-//@route        get on /auth/radius/:zipcode
+//@route        get on /auth/radius/:email/:name
 //access        private
 exports.GetWithInRadius = asyncHandler(async(req,res,next) =>{
-    const {zipcode}=req.params;
+    const abc=await User.findOne({name:req.params.name,email:req.params.email}, function(err,obj) {  })
+
+    if(!abc){
+        return next(new ErrorResponse(`name does not exist in any user ${req.params.name}`,404))
+    }
+    const zipcode= abc.location.Zipcode
     const distance=10
    //get latitude and logintude from geocoder
    const loc =await geocoder.geocode(zipcode);
